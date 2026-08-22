@@ -5,38 +5,46 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sahanvi Retail OS</title>
 <style>
-body{margin:0;font-family:Arial;background:#F5F7FA}
-.header{background:#0F766E;color:#fff;padding:15px;text-align:center;font-size:22px;font-weight:bold}
-.wrap{padding:15px}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.card{background:#fff;padding:12px;border-radius:10px;text-align:center}
-.metric{font-size:28px;color:#0F766E;font-weight:bold}
-.section{background:#fff;margin-top:15px;padding:15px;border-radius:10px}
-select,button{width:100%;padding:12px;margin-top:8px;border-radius:8px}
-.row{display:flex;gap:10px}
-.bill{background:#16A34A;color:#fff;border:none}
-.no{background:#EA580C;color:#fff;border:none}
-.reset{background:#DC2626;color:#fff;border:none;margin-top:10px}
+:root{
+ --bg:#f3f5f7;--card:#fff;--primary:#0f766e;
+ --border:#e5e7eb;--text:#1f2937;
+}
+*{box-sizing:border-box;font-family:Arial}
+body{margin:0;background:var(--bg);color:var(--text)}
+.header{background:var(--primary);color:#fff;padding:18px;text-align:center;font-size:22px;font-weight:bold}
+.wrap{padding:16px;max-width:900px;margin:auto}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.card{background:#fff;padding:14px;border-radius:12px;margin-top:14px}
+.metric{font-size:28px;font-weight:bold;color:var(--primary)}
+label{display:block;margin-top:10px;font-weight:bold}
+select,button{width:100%;padding:11px;margin-top:6px;border-radius:8px}
+.row{display:flex;gap:10px;margin-top:15px}
+.bill{background:#16a34a;color:#fff;border:none}
+.no{background:#ea580c;color:#fff;border:none}
 table{width:100%;border-collapse:collapse;margin-top:10px}
 th,td{padding:8px;border-bottom:1px solid #ddd;text-align:center}
+th{background:#f8fafc}
 </style>
 </head>
 <body>
 
-<div class="header">SAHANVI RETAIL OS</div>
+<div class="header">
+SAHANVI RETAIL OS
+<div style="font-size:13px">Version 1.1 | Manager PIN 2580</div>
+</div>
 
 <div class="wrap">
 
 <div class="grid">
-<div class="card"><div>Customers</div><div id="c" class="metric">0</div></div>
-<div class="card"><div>Bills</div><div id="b" class="metric">0</div></div>
-<div class="card"><div>Conv%</div><div id="cv" class="metric">0%</div></div>
+<div class="card"><div>Customers</div><div id="customers" class="metric">0</div></div>
+<div class="card"><div>Bills</div><div id="bills" class="metric">0</div></div>
+<div class="card"><div>Conv%</div><div id="conv" class="metric">0%</div></div>
 </div>
 
-<div class="section">
+<div class="card">
 <h3>Staff Entry</h3>
 
-First Staff
+<label>First Staff</label>
 <select id="first">
 <option>100</option><option>200</option><option>300</option>
 <option>400</option><option>500</option><option>600</option>
@@ -44,7 +52,7 @@ First Staff
 <option>1000</option>
 </select>
 
-Second Staff
+<label>Second Staff</label>
 <select id="second">
 <option value="">None</option>
 <option>100</option><option>200</option><option>300</option>
@@ -53,7 +61,7 @@ Second Staff
 <option>1000</option>
 </select>
 
-Reason
+<label>No Sale Reason</label>
 <select id="reason">
 <option>Price</option>
 <option>Design</option>
@@ -66,35 +74,39 @@ Reason
 <button class="no" onclick="nosale()">NO SALE</button>
 </div>
 
-<button class="reset" onclick="resetData()">RESET DAY</button>
 </div>
 
-<div class="section">
+<div class="card">
 <h3>Today's KPI</h3>
 <table>
-<thead><tr><th>ID</th><th>Cus</th><th>Bills</th><th>%</th></tr></thead>
+<thead>
+<tr><th>Staff</th><th>Customers</th><th>Bills</th><th>%</th></tr>
+</thead>
 <tbody id="kpi"></tbody>
 </table>
 </div>
 
-<div class="section">
-<h3>Journey</h3>
+<div class="card">
+<h3>Showing → Closing Journey</h3>
 <table>
-<thead><tr><th>1st</th><th>2nd</th><th>Result</th></tr></thead>
+<thead>
+<tr><th>1st</th><th>2nd</th><th>Result</th></tr>
+</thead>
 <tbody id="journey"></tbody>
 </table>
+</div>
+
+<div class="card">
+<button onclick="manager()">Manager Dashboard (PIN)</button>
 </div>
 
 </div>
 
 <script>
-let db=JSON.parse(localStorage.getItem("sahanvi_db")||"null");
+let db=JSON.parse(localStorage.getItem("sahanvi_v11")||"null");
 
 if(!db){
- db={
-  staff:{},
-  logs:[]
- };
+ db={staff:{},logs:[]};
  [100,200,300,400,500,600,700,800,900,1000].forEach(id=>{
    db.staff[id]={c:0,b:0};
  });
@@ -102,20 +114,16 @@ if(!db){
 }
 
 function save(){
- localStorage.setItem("sahanvi_db",JSON.stringify(db));
+ localStorage.setItem("sahanvi_v11",JSON.stringify(db));
 }
 
 function render(){
-
  let tc=0,tb=0;
  let body="";
-
  Object.keys(db.staff).forEach(id=>{
    let s=db.staff[id];
-   tc+=s.c;
-   tb+=s.b;
+   tc+=s.c; tb+=s.b;
    let per=s.c?Math.round(s.b/s.c*100):0;
-
    body+=`<tr>
    <td>${id}</td>
    <td>${s.c}</td>
@@ -123,13 +131,10 @@ function render(){
    <td>${per}%</td>
    </tr>`;
  });
-
  document.getElementById("kpi").innerHTML=body;
-
- document.getElementById("c").innerHTML=tc;
- document.getElementById("b").innerHTML=tb;
- document.getElementById("cv").innerHTML=
- tc?Math.round(tb/tc*100)+"%":"0%";
+ document.getElementById("customers").innerText=tc;
+ document.getElementById("bills").innerText=tb;
+ document.getElementById("conv").innerText=tc?Math.round(tb/tc*100)+"%":"0%";
 
  let j="";
  db.logs.slice().reverse().forEach(x=>{
@@ -139,14 +144,12 @@ function render(){
    <td>${x.result}</td>
    </tr>`;
  });
-
  document.getElementById("journey").innerHTML=j;
 }
 
 function bill(){
-
- let f=document.getElementById("first").value;
- let s=document.getElementById("second").value;
+ let f=first.value;
+ let s=second.value;
 
  db.staff[f].c++;
 
@@ -164,14 +167,12 @@ function bill(){
 
  save();
  render();
-
 }
 
 function nosale(){
-
- let f=document.getElementById("first").value;
- let s=document.getElementById("second").value;
- let r=document.getElementById("reason").value;
+ let f=first.value;
+ let s=second.value;
+ let r=reason.value;
 
  db.staff[f].c++;
 
@@ -184,13 +185,17 @@ function nosale(){
 
  save();
  render();
-
 }
 
-function resetData(){
- if(confirm("Today's data delete?")){
-   localStorage.removeItem("sahanvi_db");
-   location.reload();
+function manager(){
+ let pin=prompt("Manager PIN");
+ if(pin==="2580"){
+   if(confirm("Reset Today Data?")){
+     localStorage.removeItem("sahanvi_v11");
+     location.reload();
+   }
+ }else if(pin!=null){
+   alert("Wrong PIN");
  }
 }
 
