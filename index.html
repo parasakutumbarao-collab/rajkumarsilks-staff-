@@ -74,31 +74,11 @@
   }
 </style>
 </head>
-  <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyAAe9XhHq4pFUHspxYICMxoDICPg2U4xPg",
-  authDomain: "rajakumarsilksstaff.firebaseapp.com",
-  databaseURL: "https://rajakumarsilksstaff-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "rajakumarsilksstaff",
-  storageBucket: "rajakumarsilksstaff.firebasestorage.app",
-  messagingSenderId: "191594189646",
-  appId: "1:191594189646:web:c192d5c96549215be9041f"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-window.entriesRef = ref(db, "entries");
-window.push = push;
-window.onValue = onValue;
-</script>
 <body>
 
 <div class="header">
   SAHANVI RETAIL OS
-  <div class="sub">Version 2.5 • Firebase Sync Ready</div>
+  <div class="sub">Version 3.5 • Firebase Live Sync</div>
 </div>
 
 <div class="wrap">
@@ -201,14 +181,15 @@ window.onValue = onValue;
   </div>
 
   <div class="footer">
-  Firebase Sync Ready • v2.5 • Manager PIN 2580
+  Firebase Live Sync • v3.5 • Manager PIN 2580
   </div>
 
 </div>
 
 <script>
 // Firebase Web App Config (RAJAKUMARSILKSSTAFF)
-const firebaseConfig={apiKey:"AIzaSyAAe9XhHq4pFUHspxYICMxoDICPg2U4xPg",authDomain:"rajakumarsilksstaff.firebaseapp.com",projectId:"rajakumarsilksstaff",storageBucket:"rajakumarsilksstaff.firebasestorage.app",messagingSenderId:"191594189646",appId:"1:191594189646:web:c192d5c96549215be9041f",measurementId:"G-M631WTF4D4"};
+// Realtime Database read/write enabled
+const firebaseConfig={apiKey:"AIzaSyAAe9XhHq4pFUHspxYICMxoDICPg2U4xPg",authDomain:"rajakumarsilksstaff.firebaseapp.com",databaseURL:"https://rajakumarsilksstaff-default-rtdb.asia-southeast1.firebasedatabase.app",projectId:"rajakumarsilksstaff",storageBucket:"rajakumarsilksstaff.firebasestorage.app",messagingSenderId:"191594189646",appId:"1:191594189646:web:c192d5c96549215be9041f",measurementId:"G-M631WTF4D4"};
 const defaultNames={100:'Staff 100',200:'Staff 200',300:'Staff 300',400:'Staff 400',500:'Staff 500',600:'Staff 600',700:'Staff 700',800:'Staff 800',900:'Staff 900',1000:'Staff 1000'};
 const saved=JSON.parse(localStorage.getItem('sahanvi_v13')||localStorage.getItem('sahanvi_v12')||'null');
 const data=saved?.data||{};
@@ -217,27 +198,10 @@ const names=saved?.names||defaultNames;
   if(!data[String(id)]) data[String(id)]={c:0,b:0};
 });
 const journey=saved?.journey||[];
-function addBill() {
-  const s = document.getElementById("staff").value;
-  const second = document.getElementById("showedBy").value;
-
-  const entry = {
-    first: s,
-    second: second,
-    result: "BILL",
-    time: Date.now()
-  };
-
-  push(window.entriesRef, entry);
-
-  data[s].c++;
-  if (second && second !== s) data[second].b++;
-  else data[s].b++;
-
-  journey.push({ first: s, second: second, result: "BILL" });
-  persist();
-  render();
+function persist(){
+  localStorage.setItem('sahanvi_v13',JSON.stringify({data,journey,names}));
 }
+
 function render(){
   const tb=document.getElementById('tbody');
   tb.innerHTML='';
@@ -279,40 +243,15 @@ function addBill(){
   render();
 }
 
-function addNoSale() {
-  const s = document.getElementById("staff").value;
-  const second = document.getElementById("showedBy").value;
-  const rs = document.getElementById("reason").value;
-
-  const entry = {
-    first: s,
-    second: second,
-    result: "NO SALE",
-    reason: rs,
-    time: Date.now()
-  };
-
-onValue(window.entriesRef, (snapshot) => {
-  const rows = snapshot.val() || {};
-
-  Object.keys(data).forEach(id => data[id] = { c:0, b:0 });
-  journey.length = 0;
-
-  Object.values(rows).forEach(e => {
-    data[e.first].c++;
-    if (e.result === "BILL") {
-      if (e.second && e.second !== e.first) data[e.second].b++;
-      else data[e.first].b++;
-    }
-    journey.push({
-      first:e.first,
-      second:e.second,
-      result:e.result
-    });
-  });
-
+function addNoSale(){
+  const s=document.getElementById('staff').value;
+  const second=document.getElementById('showedBy').value;
+  data[s].c++;
+  journey.push({first:s,second:second,result:'NO SALE'});
+  persist();
   render();
-});
+}
+
 function exportCSV(){
   let csv='ID,Name,Customers,Bills,Conversion\n';
   Object.keys(data).forEach(id=>{
