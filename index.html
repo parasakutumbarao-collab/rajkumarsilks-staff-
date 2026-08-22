@@ -1,331 +1,58 @@
+
 <!DOCTYPE html>
-<html lang="te">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Sahanvi Retail OS v1.3</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>రాజకుమార్ సిల్క్స్ </title>
 <style>
-body{margin:0;font-family:Arial;background:#F5F7FA}
-.header{background:#0F766E;color:#fff;padding:18px;text-align:center;font-size:22px;font-weight:bold}
-.wrap{padding:15px;max-width:900px;margin:auto}
-.card{background:#fff;border-radius:12px;padding:14px;margin-top:12px}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.metric{font-size:28px;color:#0F766E;font-weight:bold}
-select,button{width:100%;padding:11px;margin-top:8px;border-radius:8px}
-.row{display:flex;gap:10px}
-.bill{background:#16A34A;color:#fff;border:none}
-.no{background:#EA580C;color:#fff;border:none}
-table{width:100%;border-collapse:collapse}
-th,td{padding:8px;border-bottom:1px solid #ddd;text-align:center}
+:root{--bg:#f3f5f7;--card:#ffffff;--primary:#0f766e;--border:#e5e7eb;--text:#1f2937;--muted:#6b7280;}
+*{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+body{margin:0;background:var(--bg);color:var(--text)}
+.header{background:var(--primary);color:#fff;padding:18px;text-align:center;font-weight:bold;font-size:22px}
+.sub{font-size:13px;opacity:.9;margin-top:4px}
+.wrap{padding:16px;max-width:900px;margin:auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:16px}
+.card{background:var(--card);border-radius:14px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.metric{font-size:28px;font-weight:bold;color:var(--primary)}
+label{display:block;margin:12px 0 6px;font-weight:bold}
+select,button{width:100%;padding:12px;border-radius:10px;border:1px solid var(--border);font-size:15px}
+.row{display:flex;gap:10px}.row button{flex:1}
+.bill{background:#16a34a;color:#fff;border:none}.nosale{background:#ea580c;color:#fff;border:none}
+table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+th,td{padding:10px;border-bottom:1px solid var(--border);text-align:center}
+th{background:#f8fafc}.footer{text-align:center;color:var(--muted);margin:16px 0;font-size:12px}
 </style>
 </head>
 <body>
-
-<div class="header">
-రాజకుమార్ సిల్క్స్ 
-<div style="font-size:12px">Version 1.3</div>
-</div>
-
+<div class="header">SAHANVI RETAIL OS<div class="sub">Version 1.3 • Offline HTML</div></div>
 <div class="wrap">
-
 <div class="grid">
-<div class="card"><div>Customers</div><div id="c" class="metric">0</div></div>
-<div class="card"><div>Bills</div><div id="b" class="metric">0</div></div>
-<div class="card"><div>Conv%</div><div id="cv" class="metric">0%</div></div>
+<div class="card"><div style="color:var(--muted)">Customers</div><div class="metric" id="customers">0</div></div>
+<div class="card"><div style="color:var(--muted)">Bills</div><div class="metric" id="bills">0</div></div>
+<div class="card"><div style="color:var(--muted)">Conversion</div><div class="metric" id="conv">0%</div></div>
 </div>
-<!-- STAFF ENTRY -->
-
 <div class="card">
-  <h3>👥 Staff Entry</h3>
-
-  <label>First Staff</label>
-  <select id="first">
-    <option>100</option>
-    <option>200</option>
-    <option>300</option>
-    <option>400</option>
-    <option>500</option>
-    <option>600</option>
-    <option>700</option>
-    <option>800</option>
-    <option>900</option>
-    <option>1000</option>
-  </select>
-
-  <label>Second Staff (Optional)</label>
-  <select id="second">
-    <option value="">None</option>
-    <option>100</option>
-    <option>200</option>
-    <option>300</option>
-    <option>400</option>
-    <option>500</option>
-    <option>600</option>
-    <option>700</option>
-    <option>800</option>
-    <option>900</option>
-    <option>1000</option>
-  </select>
-
-  <label>No Sale Reason</label>
-  <select id="reason">
-    <option>Price</option>
-    <option>Design</option>
-    <option>Size</option>
-    <option>Compare</option>
-  </select>
-
-  <div class="row">
-    <button class="bill" onclick="bill()">BILL</button>
-    <button class="no" onclick="nosale()">NO SALE</button>
-  </div>
+<h3>Staff Entry</h3>
+<label>Staff ID</label><select id="staff"><option>100</option><option>200</option><option>300</option><option>400</option><option>500</option><option>600</option><option>700</option><option>800</option><option>900</option><option>1000</option></select>
+<label>No Sale Reason</label><select id="reason"><option value="P">Price</option><option value="D">Design</option><option value="S">Size</option><option value="C">Compare Only</option></select>
+<label>Second Staff (Optional)</label><select id="showedBy"><option value="">No</option><option>100</option><option>200</option><option>300</option><option>400</option><option>500</option><option>600</option><option>700</option><option>800</option><option>900</option><option>1000</option></select>
+<div class="row" style="margin-top:16px"><button class="bill" onclick="addBill()">Bill</button><button class="nosale" onclick="addNoSale()">No Sale</button></div>
 </div>
-
-<!-- KPI TABLE -->
-
-<div class="card">
-  <h3>📊 Today's KPI</h3>
-
-  <table>
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Cust</th>
-        <th>Bill</th>
-        <th>%</th>
-      </tr>
-    </thead>
-
-    <tbody id="kpiBody"></tbody>
-  </table>
-</div>
-
-<!-- JOURNEY -->
-
-<div class="card">
-  <h3>🔄 Showing → Closing</h3>
-
-  <table>
-    <thead>
-      <tr>
-        <th>1st</th>
-        <th>2nd</th>
-        <th>Result</th>
-      </tr>
-    </thead>
-
-    <tbody id="journey"></tbody>
-  </table>
-</div>
-
-<!-- MANAGER -->
-
-<div class="card">
-  <button onclick="manager()">
-    🔐 Manager Dashboard
-  </button>
-</div>
+<div class="card"><h3>Today's Staff KPI</h3><table><thead><tr><th>Staff</th><th>Customers</th><th>Bills</th><th>Conv%</th></tr></thead><tbody id="tbody"></tbody></table></div>
+<div class="card"><h3>Manager</h3><div class="row"><button onclick="openManager()">🔐 Manager</button><button onclick="exportCSV()">📊 CSV</button></div></div>
+<div class="card"><h3>Showing → Closing Journey</h3><table><thead><tr><th>1st Staff</th><th>2nd Staff</th><th>Result</th></tr></thead><tbody id="journeyBody"></tbody></table></div>
+<div class="footer">Offline HTML Version • v1.3 • Manager PIN 2580</div></div>
 <script>
-// ===== DATABASE =====
-const STAFF_IDS = ["100","200","300","400","500","600","700","800","900","1000"];
-
-let db = JSON.parse(localStorage.getItem("sahanvi_v13") || "null");
-
-if (!db) {
-  db = { staff:{}, names:{}, journey:[] };
-
-  STAFF_IDS.forEach(id=>{
-    db.staff[id]={customers:0,bills:0};
-    db.names[id]="Staff "+id;
-  });
-
-  save();
-}
-
-function save(){
-  localStorage.setItem("sahanvi_v13",JSON.stringify(db));
-}
-
-function render(){
-
-  let tc=0,tb=0;
-  let body="";
-
-  STAFF_IDS.forEach(id=>{
-
-    let s=db.staff[id];
-
-    tc+=s.customers;
-    tb+=s.bills;
-
-    let per=s.customers?Math.round(s.bills/s.customers*100):0;
-
-    body+=`
-    <tr>
-      <td>${id}</td>
-      <td>${db.names[id]}</td>
-      <td>${s.customers}</td>
-      <td>${s.bills}</td>
-      <td>${per}%</td>
-    </tr>`;
-  });
-
-  kpiBody.innerHTML=body;
-
-  customers.innerHTML=tc;
-  bills.innerHTML=tb;
-  conv.innerHTML=tc?Math.round(tb/tc*100)+"%":"0%";
-
-  let j="";
-
-  db.journey.slice().reverse().forEach(x=>{
-
-    j+=`
-    <tr>
-      <td>${x.first}</td>
-      <td>${x.second||"-"}</td>
-      <td>${x.result}</td>
-    </tr>`;
-
-  });
-
-  journey.innerHTML=j;
-
-  save();
-
-}
-
-// ===== BILL =====
-function bill(){
-
- let first=document.getElementById("first").value;
- let second=document.getElementById("second").value;
-
- db.staff[first].customers++;
-
- if(second===""){
-    db.staff[first].bills++;
- }else{
-    db.staff[second].bills++;
- }
-
- db.journey.push({
-   first:first,
-   second:second,
-   result:"BILL"
- });
-
- render();
-
-}
-
-// ===== NO SALE =====
-function nosale(){
-
- let first=document.getElementById("first").value;
- let second=document.getElementById("second").value;
- let rs=document.getElementById("reason").value;
-
- db.staff[first].customers++;
-
- db.journey.push({
-   first:first,
-   second:second,
-   result:"NO SALE",
-   reason:rs
- });
-
- render();
-
-}
-
-// ===== MANAGER =====
-function manager(){
-
- let pin=prompt("Enter Manager PIN");
-
- if(pin!=="2580"){
-   alert("Wrong PIN");
-   return;
- }
-
- let opt=prompt(
-`1 = Edit Staff Name
-2 = Export CSV
-3 = Reset Day`
- );
-
- if(opt==="1"){
-
-    let id=prompt("Staff ID");
-
-    if(!STAFF_IDS.includes(id)) return;
-
-    let nm=prompt("New Name",db.names[id]);
-
-    if(nm){
-      db.names[id]=nm;
-      render();
-      alert("Updated");
-    }
-
- }
-
- if(opt==="2"){
-    exportCSV();
- }
-
- if(opt==="3"){
-
-    if(confirm("Reset Today Data?")){
-
-      STAFF_IDS.forEach(id=>{
-        db.staff[id]={customers:0,bills:0};
-      });
-
-      db.journey=[];
-
-      render();
-
-      alert("Done");
-
-    }
-
- }
-
-}
-
-// ===== CSV =====
-function exportCSV(){
-
- let csv="ID,Name,Customers,Bills,Conversion\n";
-
- STAFF_IDS.forEach(id=>{
-
-   let s=db.staff[id];
-
-   let p=s.customers?Math.round(s.bills/s.customers*100):0;
-
-   csv+=`${id},${db.names[id]},${s.customers},${s.bills},${p}%\n`;
-
- });
-
- const blob=new Blob([csv],{type:"text/csv"});
-
- const a=document.createElement("a");
-
- a.href=URL.createObjectURL(blob);
-
- a.download="Sahanvi_KPI.csv";
-
- a.click();
-
-}
-
+const defaultNames={100:'Staff 100',200:'Staff 200',300:'Staff 300',400:'Staff 400',500:'Staff 500',600:'Staff 600',700:'Staff 700',800:'Staff 800',900:'Staff 900',1000:'Staff 1000'};
+const saved=JSON.parse(localStorage.getItem('sahanvi_v13')||'null');const data=saved?.data||{};const names=saved?.names||defaultNames;[100,200,300,400,500,600,700,800,900,1000].forEach(id=>{if(!data[String(id)]) data[String(id)]={c:0,b:0};});const journey=saved?.journey||[];
+function persist(){localStorage.setItem('sahanvi_v13',JSON.stringify({data,journey,names}));}
+function render(){const tb=document.getElementById('tbody');tb.innerHTML='';let tc=0,tbills=0;Object.keys(data).forEach(id=>{const d=data[id];tc+=d.c;tbills+=d.b;const conv=d.c?Math.round(d.b/d.c*100):0;tb.innerHTML+=`<tr><td>${id}<br><small>${names[id]}</small></td><td>${d.c}</td><td>${d.b}</td><td>${conv}%</td></tr>`;});document.getElementById('customers').textContent=tc;document.getElementById('bills').textContent=tbills;document.getElementById('conv').textContent=tc?Math.round(tbills/tc*100)+'%':'0%';const jb=document.getElementById('journeyBody');jb.innerHTML='';journey.slice().reverse().forEach(j=>{jb.innerHTML+=`<tr><td>${j.first}</td><td>${j.second||'-'}</td><td>${j.result}</td></tr>`;});persist();}
+function addBill(){const s=staff.value,second=showedBy.value;data[s].c++;if(second&&second!==s){data[second].b++;}else{data[s].b++;}journey.push({first:s,second:second,result:'BILL'});render();}
+function addNoSale(){const s=staff.value,second=showedBy.value;data[s].c++;journey.push({first:s,second:second,result:'NO SALE',reason:reason.value});render();}
+function exportCSV(){let csv='ID,Name,Customers,Bills,Conversion\n';Object.keys(data).forEach(id=>{const d=data[id];const p=d.c?Math.round(d.b/d.c*100):0;csv+=`${id},${names[id]},${d.c},${d.b},${p}%\n`;});const blob=new Blob([csv],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Sahanvi_KPI.csv';a.click();}
+function openManager(){const pin=prompt('Manager PIN');if(pin==='2580'){const action=prompt('1=Edit Staff Name\\n2=Reset Day\\n3=Export CSV');if(action==='1'){const id=prompt('Staff ID');if(id&&names[id]!==undefined){const nm=prompt('New Name',names[id]);if(nm){names[id]=nm;render();alert('Updated');}}}else if(action==='2'&&confirm('Reset Today Data?')){Object.keys(data).forEach(id=>data[id]={c:0,b:0});journey.length=0;render();}else if(action==='3'){exportCSV();}}else if(pin!==null){alert('Wrong PIN');}}
 render();
-
 </script>
-
 </body>
 </html>
