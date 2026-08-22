@@ -78,7 +78,7 @@
 
 <div class="header">
   SAHANVI RETAIL OS
-  <div class="sub">Version 8.0 • Firebase Realtime Sync</div>
+  <div class="sub">Version 13.0 • Monthly Dashboard</div>
 </div>
 
 <div class="wrap">
@@ -166,7 +166,7 @@
       <button onclick="exportCSV()">📊 CSV</button>
     </div>
     <p style="font-size:12px;color:#0f766e;margin-top:10px">
-      Daily archive • Monthly report • Firebase sync ready.
+      Monthly archive • Top performer • Firebase sync ready.
     </p>
   </div>
 
@@ -181,7 +181,7 @@
   </div>
 
   <div class="footer">
-  Firebase Live Sync Ready • v8.0 • Manager PIN 2580
+  Firebase Live Sync Ready • v13.0 Dashboard • Manager PIN 2580
   </div>
 
 </div>
@@ -258,12 +258,18 @@ function addNoSale(){
   render();
 }
 
-function exportCSV(){
-  let csv='ID,Name,Customers,Bills,Conversion\n';
+window.exportCSV=function exportCSV(){
+  let csv='STAFF KPI\n';
+  csv+='ID,Name,Customers,Bills,Conversion\n';
   Object.keys(data).forEach(id=>{
     const d=data[id];
     const p=d.c?Math.round(d.b/d.c*100):0;
     csv+=`${id},${names[id]},${d.c},${d.b},${p}%\n`;
+  });
+  csv+='\nCLOSING JOURNEY\n';
+  csv+='1st Staff,2nd Staff,Result,Reason\n';
+  journey.forEach(j=>{
+    csv+=`${j.first},${j.second||''},${j.result},${j.reason||''}\n`;
   });
   const blob=new Blob([csv],{type:'text/csv'});
   const a=document.createElement('a');
@@ -272,7 +278,7 @@ function exportCSV(){
   a.click();
 }
 
-function openManager(){
+window.openManager=function openManager(){
   const pin = prompt('Manager PIN');
   if(pin==='2580'){
     const action=prompt('1 = Edit Staff Name\n2 = Reset Day (Archive)\n3 = Export CSV\n4 = Monthly Report\n5 = Firebase Status');
@@ -289,7 +295,17 @@ function openManager(){
       return;
     }
     if(action==='4'){
-      alert('Monthly Report v8.0 Ready');
+      const d=prompt('Enter Date (YYYY-MM-DD)','2025-01-01');
+      if(!d) return;
+      const list=journey.filter(x=>x.time && new Date(x.time).toISOString().slice(0,10)===d);
+      const cust=list.length;
+      const bills=list.filter(x=>x.result==='BILL').length;
+      const ns=list.filter(x=>x.result==='NO SALE').length;
+      const reason={P:0,D:0,S:0,C:0};
+      const staff={};
+      list.forEach(x=>{if(x.result==='NO SALE'&&x.reason) reason[x.reason]=(reason[x.reason]||0)+1; if(!staff[x.first]) staff[x.first]={c:0,b:0}; staff[x.first].c++; if(x.result==='BILL') staff[x.first].b++;});
+      const top=Object.entries(staff).sort((a,b)=>b[1].b-a[1].b)[0];
+      alert(`DATE REPORT\n${d}\n\nCustomers: ${cust}\nBills: ${bills}\nNo Sale: ${ns}\n\nTop Performer: ${top?top[0]:'-'} (${top?top[1].b:0} Bills)\n\nReasons\nPrice: ${reason.P}\nDesign: ${reason.D}\nSize: ${reason.S}\nCompare: ${reason.C}`);
       return;
     }
     if(action==='5'){
@@ -322,7 +338,8 @@ onValue(entriesRef,(snap)=>{
       first:e.first,
       second:e.second||'',
       result:e.result,
-      reason:e.reason||''
+      reason:e.reason||'',
+      time:e.time||0
     });
   });
   render();
