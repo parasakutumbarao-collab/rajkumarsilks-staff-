@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="te">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sahanvi Retail OS</title>
+<style>
+body{margin:0;font-family:Arial;background:#F5F7FA}
+.header{background:#0F766E;color:#fff;padding:15px;text-align:center;font-size:22px;font-weight:bold}
+.wrap{padding:15px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.card{background:#fff;padding:12px;border-radius:10px;text-align:center}
+.metric{font-size:28px;color:#0F766E;font-weight:bold}
+.section{background:#fff;margin-top:15px;padding:15px;border-radius:10px}
+select,button{width:100%;padding:12px;margin-top:8px;border-radius:8px}
+.row{display:flex;gap:10px}
+.bill{background:#16A34A;color:#fff;border:none}
+.no{background:#EA580C;color:#fff;border:none}
+.reset{background:#DC2626;color:#fff;border:none;margin-top:10px}
+table{width:100%;border-collapse:collapse;margin-top:10px}
+th,td{padding:8px;border-bottom:1px solid #ddd;text-align:center}
+</style>
+</head>
+<body>
+
+<div class="header">SAHANVI RETAIL OS</div>
+
+<div class="wrap">
+
+<div class="grid">
+<div class="card"><div>Customers</div><div id="c" class="metric">0</div></div>
+<div class="card"><div>Bills</div><div id="b" class="metric">0</div></div>
+<div class="card"><div>Conv%</div><div id="cv" class="metric">0%</div></div>
+</div>
+
+<div class="section">
+<h3>Staff Entry</h3>
+
+First Staff
+<select id="first">
+<option>100</option><option>200</option><option>300</option>
+<option>400</option><option>500</option><option>600</option>
+<option>700</option><option>800</option><option>900</option>
+<option>1000</option>
+</select>
+
+Second Staff
+<select id="second">
+<option value="">None</option>
+<option>100</option><option>200</option><option>300</option>
+<option>400</option><option>500</option><option>600</option>
+<option>700</option><option>800</option><option>900</option>
+<option>1000</option>
+</select>
+
+Reason
+<select id="reason">
+<option>Price</option>
+<option>Design</option>
+<option>Size</option>
+<option>Compare</option>
+</select>
+
+<div class="row">
+<button class="bill" onclick="bill()">BILL</button>
+<button class="no" onclick="nosale()">NO SALE</button>
+</div>
+
+<button class="reset" onclick="resetData()">RESET DAY</button>
+</div>
+
+<div class="section">
+<h3>Today's KPI</h3>
+<table>
+<thead><tr><th>ID</th><th>Cus</th><th>Bills</th><th>%</th></tr></thead>
+<tbody id="kpi"></tbody>
+</table>
+</div>
+
+<div class="section">
+<h3>Journey</h3>
+<table>
+<thead><tr><th>1st</th><th>2nd</th><th>Result</th></tr></thead>
+<tbody id="journey"></tbody>
+</table>
+</div>
+
+</div>
+
+<script>
+let db=JSON.parse(localStorage.getItem("sahanvi_db")||"null");
+
+if(!db){
+ db={
+  staff:{},
+  logs:[]
+ };
+ [100,200,300,400,500,600,700,800,900,1000].forEach(id=>{
+   db.staff[id]={c:0,b:0};
+ });
+ save();
+}
+
+function save(){
+ localStorage.setItem("sahanvi_db",JSON.stringify(db));
+}
+
+function render(){
+
+ let tc=0,tb=0;
+ let body="";
+
+ Object.keys(db.staff).forEach(id=>{
+   let s=db.staff[id];
+   tc+=s.c;
+   tb+=s.b;
+   let per=s.c?Math.round(s.b/s.c*100):0;
+
+   body+=`<tr>
+   <td>${id}</td>
+   <td>${s.c}</td>
+   <td>${s.b}</td>
+   <td>${per}%</td>
+   </tr>`;
+ });
+
+ document.getElementById("kpi").innerHTML=body;
+
+ document.getElementById("c").innerHTML=tc;
+ document.getElementById("b").innerHTML=tb;
+ document.getElementById("cv").innerHTML=
+ tc?Math.round(tb/tc*100)+"%":"0%";
+
+ let j="";
+ db.logs.slice().reverse().forEach(x=>{
+   j+=`<tr>
+   <td>${x.first}</td>
+   <td>${x.second||"-"}</td>
+   <td>${x.result}</td>
+   </tr>`;
+ });
+
+ document.getElementById("journey").innerHTML=j;
+}
+
+function bill(){
+
+ let f=document.getElementById("first").value;
+ let s=document.getElementById("second").value;
+
+ db.staff[f].c++;
+
+ if(s==""){
+   db.staff[f].b++;
+ }else{
+   db.staff[s].b++;
+ }
+
+ db.logs.push({
+  first:f,
+  second:s,
+  result:"BILL"
+ });
+
+ save();
+ render();
+
+}
+
+function nosale(){
+
+ let f=document.getElementById("first").value;
+ let s=document.getElementById("second").value;
+ let r=document.getElementById("reason").value;
+
+ db.staff[f].c++;
+
+ db.logs.push({
+  first:f,
+  second:s,
+  result:"NO SALE",
+  reason:r
+ });
+
+ save();
+ render();
+
+}
+
+function resetData(){
+ if(confirm("Today's data delete?")){
+   localStorage.removeItem("sahanvi_db");
+   location.reload();
+ }
+}
+
+render();
+</script>
+
+</body>
+</html>
