@@ -217,6 +217,10 @@ const names=saved?.names||defaultNames;
   if(!data[String(id)]) data[String(id)]={c:0,b:0};
 });
 const journey=saved?.journey||[];
+function persist(){
+  localStorage.setItem('sahanvi_v13', JSON.stringify({data,names,journey}));
+}
+
 function addBill() {
   const s = document.getElementById("staff").value;
   const second = document.getElementById("showedBy").value;
@@ -265,19 +269,6 @@ function render(){
   });
 }
 
-function addBill(){
-  const s=document.getElementById('staff').value;
-  const second=document.getElementById('showedBy').value;
-  data[s].c++;
-  if(second && second!==s){
-    data[second].b++;
-  }else{
-    data[s].b++;
-  }
-  journey.push({first:s,second:second,result:'BILL'});
-  persist();
-  render();
-}
 
 function addNoSale() {
   const s = document.getElementById("staff").value;
@@ -292,9 +283,14 @@ function addNoSale() {
     time: Date.now()
   };
 
+  push(window.entriesRef, entry);
+  data[s].c++;
+  journey.push({ first:s, second:second, result:"NO SALE" });
+  persist();
+}
+
 onValue(window.entriesRef, (snapshot) => {
   const rows = snapshot.val() || {};
-
   Object.keys(data).forEach(id => data[id] = { c:0, b:0 });
   journey.length = 0;
 
@@ -313,6 +309,7 @@ onValue(window.entriesRef, (snapshot) => {
 
   render();
 });
+
 function exportCSV(){
   let csv='ID,Name,Customers,Bills,Conversion\n';
   Object.keys(data).forEach(id=>{
