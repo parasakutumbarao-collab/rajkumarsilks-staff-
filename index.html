@@ -292,13 +292,27 @@ function addNoSale() {
     time: Date.now()
   };
 
-  push(window.entriesRef, entry);
+onValue(window.entriesRef, (snapshot) => {
+  const rows = snapshot.val() || {};
 
-  data[s].c++;
-  journey.push({ first: s, second: second, result: "NO SALE" });
-  persist();
+  Object.keys(data).forEach(id => data[id] = { c:0, b:0 });
+  journey.length = 0;
+
+  Object.values(rows).forEach(e => {
+    data[e.first].c++;
+    if (e.result === "BILL") {
+      if (e.second && e.second !== e.first) data[e.second].b++;
+      else data[e.first].b++;
+    }
+    journey.push({
+      first:e.first,
+      second:e.second,
+      result:e.result
+    });
+  });
+
   render();
-}
+});
 function exportCSV(){
   let csv='ID,Name,Customers,Bills,Conversion\n';
   Object.keys(data).forEach(id=>{
