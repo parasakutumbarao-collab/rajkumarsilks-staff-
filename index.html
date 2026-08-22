@@ -217,10 +217,27 @@ const names=saved?.names||defaultNames;
   if(!data[String(id)]) data[String(id)]={c:0,b:0};
 });
 const journey=saved?.journey||[];
-function persist(){
-  localStorage.setItem('sahanvi_v13',JSON.stringify({data,journey,names}));
-}
+function addBill() {
+  const s = document.getElementById("staff").value;
+  const second = document.getElementById("showedBy").value;
 
+  const entry = {
+    first: s,
+    second: second,
+    result: "BILL",
+    time: Date.now()
+  };
+
+  push(window.entriesRef, entry);
+
+  data[s].c++;
+  if (second && second !== s) data[second].b++;
+  else data[s].b++;
+
+  journey.push({ first: s, second: second, result: "BILL" });
+  persist();
+  render();
+}
 function render(){
   const tb=document.getElementById('tbody');
   tb.innerHTML='';
@@ -262,15 +279,26 @@ function addBill(){
   render();
 }
 
-function addNoSale(){
-  const s=document.getElementById('staff').value;
-  const second=document.getElementById('showedBy').value;
+function addNoSale() {
+  const s = document.getElementById("staff").value;
+  const second = document.getElementById("showedBy").value;
+  const rs = document.getElementById("reason").value;
+
+  const entry = {
+    first: s,
+    second: second,
+    result: "NO SALE",
+    reason: rs,
+    time: Date.now()
+  };
+
+  push(window.entriesRef, entry);
+
   data[s].c++;
-  journey.push({first:s,second:second,result:'NO SALE'});
+  journey.push({ first: s, second: second, result: "NO SALE" });
   persist();
   render();
 }
-
 function exportCSV(){
   let csv='ID,Name,Customers,Bills,Conversion\n';
   Object.keys(data).forEach(id=>{
