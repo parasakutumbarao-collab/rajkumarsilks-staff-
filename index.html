@@ -1,1 +1,51 @@
-<!DOCTYPE html><html><head><meta charset='UTF-8'><title>Sahanvi Retail OS v2.1</title></head><body><h2>SAHANVI RETAIL OS v2.1</h2><p>Firebase Ready</p></body></html>
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sahanvi Retail OS v2.1</title>
+<style>
+body{font-family:Arial;background:#f3f4f6;margin:0}
+header{background:#0f766e;color:#fff;padding:18px;text-align:center}
+.wrap{max-width:900px;margin:auto;padding:16px}
+.card{background:#fff;border-radius:12px;padding:16px;margin:12px 0}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.metric{font-size:28px;color:#0f766e;font-weight:bold}
+select,button{width:100%;padding:10px;margin-top:8px}
+button{background:#16a34a;color:#fff;border:0;border-radius:8px}
+table{width:100%;border-collapse:collapse}td,th{border-bottom:1px solid #ddd;padding:8px;text-align:center}
+</style>
+</head>
+<body>
+<header><h2>SAHANVI RETAIL OS v2.1</h2><div>Firebase Ready</div></header>
+<div class="wrap">
+<div class="grid">
+<div class="card"><div>Customers</div><div class="metric" id="c">0</div></div>
+<div class="card"><div>Bills</div><div class="metric" id="b">0</div></div>
+<div class="card"><div>Conv%</div><div class="metric" id="p">0%</div></div>
+</div>
+<div class="card">
+<h3>Staff Entry</h3>
+<label>Staff</label>
+<select id="staff"></select>
+<label>Reason</label>
+<select id="reason"><option>Price</option><option>Design</option><option>Size</option></select>
+<button onclick="bill()">Bill</button>
+</div>
+<div class="card">
+<h3>KPI</h3>
+<table><thead><tr><th>ID</th><th>Customers</th><th>Bills</th></tr></thead><tbody id="tb"></tbody></table>
+</div>
+</div>
+<script>
+const ids=[100,200,300,400,500,600,700,800,900,1000];
+const d=JSON.parse(localStorage.getItem("sahanvi")||"{}");
+ids.forEach(i=>{if(!d[i])d[i]={c:0,b:0};staff.innerHTML+=`<option>${i}</option>`});
+function save(){localStorage.setItem("sahanvi",JSON.stringify(d));draw()}
+function bill(){d[staff.value].c++;d[staff.value].b++;save()}
+function draw(){let tc=0,tbills=0;tb.innerHTML="";ids.forEach(i=>{tc+=d[i].c;tbills+=d[i].b;tb.innerHTML+=`<tr><td>${i}</td><td>${d[i].c}</td><td>${d[i].b}</td></tr>`});c.textContent=tc;b.textContent=tbills;p.textContent=(tc?Math.round(tbills/tc*100):0)+"%";}
+draw();
+</script>
+</body></html>
