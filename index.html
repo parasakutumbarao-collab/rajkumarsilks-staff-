@@ -74,6 +74,26 @@
   }
 </style>
 </head>
+  <script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAAe9XhHq4pFUHspxYICMxoDICPg2U4xPg",
+  authDomain: "rajakumarsilksstaff.firebaseapp.com",
+  databaseURL: "https://rajakumarsilksstaff-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "rajakumarsilksstaff",
+  storageBucket: "rajakumarsilksstaff.firebasestorage.app",
+  messagingSenderId: "191594189646",
+  appId: "1:191594189646:web:c192d5c96549215be9041f"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+window.entriesRef = ref(db, "entries");
+window.push = push;
+window.onValue = onValue;
+</script>
 <body>
 
 <div class="header">
