@@ -1,305 +1,114 @@
 
 
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Sahanvi Retail OS</title>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sahanvi Retail OS v6.1.1</title>
 <style>
-  :root{
-    --bg:#f3f5f7;
-    --card:#ffffff;
-    --primary:#0f766e;
-    --accent:#2563eb;
-    --danger:#dc2626;
-    --text:#1f2937;
-    --muted:#6b7280;
-    --border:#e5e7eb;
-  }
-  *{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
-  body{margin:0;background:var(--bg);color:var(--text)}
-  .header{
-    background:var(--primary);
-    color:#fff;
-    padding:18px;
-    text-align:center;
-    font-weight:bold;
-    font-size:22px;
-  }
-  .sub{font-size:13px;opacity:.9;margin-top:4px}
-  .wrap{padding:16px;max-width:900px;margin:auto}
-  .grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
-    gap:12px;
-    margin-bottom:16px;
-  }
-  .card{
-    background:var(--card);
-    border-radius:14px;
-    padding:14px;
-    box-shadow:0 2px 8px rgba(0,0,0,.05);
-  }
-  .metric{font-size:28px;font-weight:bold;color:var(--primary)}
-  label{display:block;margin:12px 0 6px;font-weight:bold}
-  select,button{
-    width:100%;
-    padding:12px;
-    border-radius:10px;
-    border:1px solid var(--border);
-    font-size:15px;
-  }
-  .row{display:flex;gap:10px}
-  .row button{flex:1}
-  .bill{background:#16a34a;color:#fff;border:none}
-  .nosale{background:#ea580c;color:#fff;border:none}
-  table{
-    width:100%;
-    border-collapse:collapse;
-    margin-top:12px;
-    font-size:14px;
-  }
-  th,td{
-    padding:10px;
-    border-bottom:1px solid var(--border);
-    text-align:center;
-  }
-  th{background:#f8fafc}
-  .footer{
-    text-align:center;
-    color:var(--muted);
-    margin:16px 0;
-    font-size:12px;
-  }
+body{font-family:Arial,sans-serif;background:#f3f5f7;margin:0}
+header{background:#0f766e;color:#fff;padding:18px;text-align:center}
+.wrap{max-width:900px;margin:auto;padding:16px}
+.card{background:#fff;border-radius:12px;padding:16px;margin-bottom:12px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.metric{font-size:28px;font-weight:bold;color:#0f766e}
+table{width:100%;border-collapse:collapse}
+th,td{padding:8px;border-bottom:1px solid #ddd;text-align:center}
+button{padding:10px;border:0;border-radius:8px;color:#fff;cursor:pointer}
+.bill{background:#16a34a}.nosale{background:#ea580c}
+select{width:100%;padding:10px;margin:6px 0 12px}
 </style>
 </head>
 <body>
-
-<div class="header">
-  SAHANVI RETAIL OS
-  <div class="sub">Version 3.5 • Firebase Live Sync</div>
-</div>
+<header>
+<h2>SAHANVI RETAIL OS</h2>
+<div>Version 6.1.1 • Firebase Realtime Sync</div>
+</header>
 
 <div class="wrap">
-
-  <div class="grid">
-    <div class="card">
-      <div style="color:var(--muted)">Customers</div>
-      <div class="metric" id="customers">0</div>
-    </div>
-    <div class="card">
-      <div style="color:var(--muted)">Bills</div>
-      <div class="metric" id="bills">0</div>
-    </div>
-    <div class="card">
-      <div style="color:var(--muted)">Conversion</div>
-      <div class="metric" id="conv">0%</div>
-    </div>
-  </div>
-
-  <div class="card">
-    <h3>Staff Entry</h3>
-
-    <label>Staff ID</label>
-    <select id="staff">
-      <option>100</option>
-      <option>200</option>
-      <option>300</option>
-      <option>400</option>
-      <option>500</option>
-      <option>600</option>
-      <option>700</option>
-      <option>800</option>
-      <option>900</option>
-      <option>1000</option>
-    </select>
-
-    <label>No Sale Reason</label>
-    <select id="reason">
-      <option value="P">Price</option>
-      <option value="D">Design</option>
-      <option value="S">Size</option>
-      <option value="C">Compare Only</option>
-    </select>
-
-    <label>Second Staff (Optional)</label>
-    <select id="showedBy">
-      <option value="">No</option>
-      <option>100</option>
-      <option>200</option>
-      <option>300</option>
-      <option>400</option>
-      <option>500</option>
-      <option>600</option>
-      <option>700</option>
-      <option>800</option>
-      <option>900</option>
-      <option>1000</option>
-    </select>
-
-    <div class="row" style="margin-top:16px">
-      <button class="bill" onclick="addBill()">Bill</button>
-      <button class="nosale" onclick="addNoSale()">No Sale</button>
-    </div>
-  </div>
-
-  <div class="card">
-    <h3>Today's Staff KPI</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Staff</th>
-          <th>Customers</th>
-          <th>Bills</th>
-          <th>Conv%</th>
-        </tr>
-      </thead>
-      <tbody id="tbody"></tbody>
-    </table>
-  </div>
-
-  <div class="card">
-    <h3>Manager</h3>
-    <div class="row">
-      <button onclick="openManager()">🔐 Manager</button>
-      <button onclick="exportCSV()">📊 CSV</button>
-    </div>
-    <p style="font-size:12px;color:#0f766e;margin-top:10px">
-      Daily archive • Monthly report • Firebase sync ready.
-    </p>
-  </div>
-
-  <div class="card">
-    <h3>Showing → Closing Journey</h3>
-    <table>
-      <thead>
-        <tr><th>1st Staff</th><th>2nd Staff</th><th>Result</th></tr>
-      </thead>
-      <tbody id="journeyBody"></tbody>
-    </table>
-  </div>
-
-  <div class="footer">
-  Firebase Live Sync • v3.5 • Manager PIN 2580
-  </div>
-
+<div class="card grid">
+<div><div>Customers</div><div id="customers" class="metric">0</div></div>
+<div><div>Bills</div><div id="bills" class="metric">0</div></div>
+<div><div>Conversion</div><div id="conv" class="metric">0%</div></div>
 </div>
 
-<script>
-// Firebase Web App Config (RAJAKUMARSILKSSTAFF)
-// Realtime Database read/write enabled
-const firebaseConfig={apiKey:"AIzaSyAAe9XhHq4pFUHspxYICMxoDICPg2U4xPg",authDomain:"rajakumarsilksstaff.firebaseapp.com",databaseURL:"https://rajakumarsilksstaff-default-rtdb.asia-southeast1.firebasedatabase.app",projectId:"rajakumarsilksstaff",storageBucket:"rajakumarsilksstaff.firebasestorage.app",messagingSenderId:"191594189646",appId:"1:191594189646:web:c192d5c96549215be9041f",measurementId:"G-M631WTF4D4"};
-const defaultNames={100:'Staff 100',200:'Staff 200',300:'Staff 300',400:'Staff 400',500:'Staff 500',600:'Staff 600',700:'Staff 700',800:'Staff 800',900:'Staff 900',1000:'Staff 1000'};
-const saved=JSON.parse(localStorage.getItem('sahanvi_v13')||localStorage.getItem('sahanvi_v12')||'null');
-const data=saved?.data||{};
-const names=saved?.names||defaultNames;
-[100,200,300,400,500,600,700,800,900,1000].forEach(id=>{
-  if(!data[String(id)]) data[String(id)]={c:0,b:0};
+<div class="card">
+<h3>Staff Entry</h3>
+<select id="staff"><option>100</option><option>200</option><option>300</option><option>400</option><option>500</option><option>600</option><option>700</option><option>800</option><option>900</option><option>1000</option></select>
+<select id="showedBy"><option value="">No Second Staff</option><option>100</option><option>200</option><option>300</option><option>400</option><option>500</option><option>600</option><option>700</option><option>800</option><option>900</option><option>1000</option></select>
+<div style="display:flex;gap:10px">
+<button class="bill" onclick="addBill()">Bill</button>
+<button class="nosale" onclick="addNoSale()">No Sale</button>
+</div>
+</div>
+
+<div class="card">
+<h3>Showing → Closing Journey</h3>
+<table>
+<thead><tr><th>1st</th><th>2nd</th><th>Result</th></tr></thead>
+<tbody id="journeyBody"></tbody>
+</table>
+</div>
+</div>
+
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {getDatabase,ref,push,onValue} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const app=initializeApp({
+ apiKey:"AIzaSyAAe9XhHq4pFUHspxYICMxoDICPg2U4xPg",
+ authDomain:"rajakumarsilksstaff.firebaseapp.com",
+ databaseURL:"https://rajakumarsilksstaff-default-rtdb.asia-southeast1.firebasedatabase.app",
+ projectId:"rajakumarsilksstaff",
+ storageBucket:"rajakumarsilksstaff.firebasestorage.app",
+ messagingSenderId:"191594189646",
+ appId:"1:191594189646:web:c192d5c96549215be9041f"
 });
-const journey=saved?.journey||[];
-function persist(){
-  localStorage.setItem('sahanvi_v13',JSON.stringify({data,journey,names}));
-}
 
-function render(){
-  const tb=document.getElementById('tbody');
-  tb.innerHTML='';
-  let tc=0,tbills=0;
-  Object.keys(data).forEach(id=>{
-    const d=data[id];
-    tc+=d.c;
-    tbills+=d.b;
-    const tr=document.createElement('tr');
-    const conv=d.c?Math.round(d.b/d.c*100):0;
-    tr.innerHTML=`<td>${id}<br><small>${names[id]}</small></td><td>${d.c}</td><td>${d.b}</td><td>${conv}%</td>`;
-    tb.appendChild(tr);
-  });
-  persist();
-  document.getElementById('customers').textContent=tc;
-  document.getElementById('bills').textContent=tbills;
-  document.getElementById('conv').textContent=tc?Math.round(tbills/tc*100)+'%':'0%';
+const db=getDatabase(app);
+const entries=ref(db,"entries");
 
-  const jb=document.getElementById('journeyBody');
-  jb.innerHTML='';
-  journey.slice().reverse().forEach(j=>{
-    const tr=document.createElement('tr');
-    tr.innerHTML=`<td>${j.first}</td><td>${j.second||'-'}</td><td>${j.result}</td>`;
-    jb.appendChild(tr);
-  });
-}
+window.addBill=()=>{
+ push(entries,{
+   first:staff.value,
+   second:showedBy.value,
+   result:"BILL",
+   time:Date.now()
+ });
+};
 
-function addBill(){
-  const s=document.getElementById('staff').value;
-  const second=document.getElementById('showedBy').value;
-  data[s].c++;
-  if(second && second!==s){
-    data[second].b++;
-  }else{
-    data[s].b++;
-  }
-  journey.push({first:s,second:second,result:'BILL'});
-  persist();
-  render();
-}
+window.addNoSale=()=>{
+ push(entries,{
+   first:staff.value,
+   second:showedBy.value,
+   result:"NO SALE",
+   time:Date.now()
+ });
+};
 
-function addNoSale(){
-  const s=document.getElementById('staff').value;
-  const second=document.getElementById('showedBy').value;
-  data[s].c++;
-  journey.push({first:s,second:second,result:'NO SALE'});
-  persist();
-  render();
-}
-
-function exportCSV(){
-  let csv='ID,Name,Customers,Bills,Conversion\n';
-  Object.keys(data).forEach(id=>{
-    const d=data[id];
-    const p=d.c?Math.round(d.b/d.c*100):0;
-    csv+=`${id},${names[id]},${d.c},${d.b},${p}%\n`;
-  });
-  const blob=new Blob([csv],{type:'text/csv'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  a.download='Sahanvi_KPI.csv';
-  a.click();
-}
-
-function openManager(){
-  const pin = prompt('Manager PIN');
-  if(pin==='2580'){
-    const action=prompt('1 = Edit Staff Name\n2 = Reset Day (Archive)\n3 = Export CSV\n4 = Monthly Report\n5 = Firebase Status');
-    if(action==='1'){
-      const id=prompt('Staff ID');
-      if(id && names[id]!==undefined){
-        const nm=prompt('New Staff Name',names[id]);
-        if(nm){names[id]=nm;render();alert('Name Updated');}
-      }
-      return;
-    }
-    if(action==='3'){
-      exportCSV();
-      return;
-    }
-    if(action==='5'){
-      alert('Firebase project connected: rajakumarsilksstaff');
-      return;
-    }
-    if(action==='2' && confirm('Archive today and start new day?')){
-      Object.keys(data).forEach(id=>{data[id]={c:0,b:0};});
-      journey.length=0;
-      persist();
-      render();
-      alert('Today data reset');
-    }
-  }else if(pin!==null){
-    alert('Wrong PIN');
-  }
-}
-
-render();
+onValue(entries,s=>{
+ const rows=s.val()||{};
+ const stat={},journey=[];
+ let c=0,b=0;
+ Object.values(rows).forEach(r=>{
+   stat[r.first]=stat[r.first]||{c:0,b:0};
+   stat[r.first].c++; c++;
+   if(r.result==="BILL"){
+     const id=(r.second&&r.second!==r.first)?r.second:r.first;
+     stat[id]=stat[id]||{c:0,b:0};
+     stat[id].b++; b++;
+   }
+   journey.push(r);
+ });
+ customers.textContent=c;
+ bills.textContent=b;
+ conv.textContent=c?Math.round(b/c*100)+"%":"0%";
+ journeyBody.innerHTML="";
+ journey.reverse().forEach(j=>{
+   journeyBody.innerHTML+=`<tr><td>${j.first}</td><td>${j.second||"-"}</td><td>${j.result}</td></tr>`;
+ });
+});
 </script>
-
 </body>
 </html>
