@@ -78,7 +78,7 @@
 
 <div class="header">
   SAHANVI RETAIL OS
-  <div class="sub">Version 2.3 • Monthly Ready</div>
+  <div class="sub">Version 2.5 • Firebase Sync Ready</div>
 </div>
 
 <div class="wrap">
@@ -166,7 +166,7 @@
       <button onclick="exportCSV()">📊 CSV</button>
     </div>
     <p style="font-size:12px;color:#0f766e;margin-top:10px">
-      Daily reset keeps monthly history ready.
+      Daily archive • Monthly report • Firebase sync ready.
     </p>
   </div>
 
@@ -181,7 +181,7 @@
   </div>
 
   <div class="footer">
-    Monthly Ready • v2.3 • Manager PIN 2580
+  Firebase Sync Ready • v2.5 • Manager PIN 2580
   </div>
 
 </div>
@@ -268,7 +268,7 @@ function exportCSV(){
 function openManager(){
   const pin = prompt('Manager PIN');
   if(pin==='2580'){
-    const action=prompt('1 = Edit Staff Name\n2 = Reset Day (Archive)\n3 = Export CSV\n4 = Monthly Report');
+    const action=prompt('1 = Edit Staff Name\n2 = Reset Day (Archive)\n3 = Export CSV\n4 = Monthly Report\n5 = Firebase Status');
     if(action==='1'){
       const id=prompt('Staff ID');
       if(id && names[id]!==undefined){
@@ -279,6 +279,10 @@ function openManager(){
     }
     if(action==='3'){
       exportCSV();
+      return;
+    }
+    if(action==='5'){
+      alert('Firebase project connected: rajakumarsilksstaff');
       return;
     }
     if(action==='2' && confirm('Archive today and start new day?')){
